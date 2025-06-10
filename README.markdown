@@ -49,8 +49,6 @@ _Screenshots showcasing the text input, analysis results (word frequencies, domi
   <img src="screenshots\6.jpg" width="300"/>
   <img src="screenshots\7.jpg" width="300"/>
   <img src="screenshots\8.jpg" width="300"/>
-  <img src="screenshots\9.jpg" width="300"/>
-  <img src="screenshots\10jpg" width="300"/>
 </p>
 
 ## ⚙️ System Requirements

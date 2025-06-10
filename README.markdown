@@ -1,4 +1,4 @@
-# 👁️👂✋ Sensory System Analyzer Pro 🧠
+# 👁️👂✋ Sensory System Analyzer Pro - Analyzing prefered sensory system 🧠
 _A C++ console application to identify preferred sensory systems (Visual, Auditory, Kinesthetic) by analyzing word choices in text._
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -21,6 +21,8 @@ _A C++ console application to identify preferred sensory systems (Visual, Audito
 
 **Sensory System Analyzer Pro** is an innovative C++ console application designed to analyze text and identify a person's likely preferred sensory representational system: **Visual (V)**, **Auditory (A)**, or **Kinesthetic (K)**. By examining the frequency of specific sensory-based words used in a provided text, the program offers insights into how an individual might primarily perceive and process information. It features detailed word frequency analysis, the ability to save and view analysis results, a helpful guide explaining word categories, and an engaging colorful user interface.
 
+![Demo GIF](screenshots/1.gif)
+
 ## ✨ Key Features
 
 *   🧠 **Sensory System Analysis**: Processes input text to count occurrences of Visual, Auditory, and Kinesthetic keywords.
@@ -36,9 +38,20 @@ _A C++ console application to identify preferred sensory systems (Visual, Audito
 
 ## 🖼️ Screenshots
 
-**Coming soon!**
+_Screenshots showcasing the text input, analysis results (word frequencies, dominant system), the help guide, and other interface elements._
 
-_This section will be updated with screenshots showcasing the text input, analysis results (word frequencies, dominant system), the help guide, and other interface elements._
+<p align="center">
+  <img src="screenshots\1.jpg" width="300"/>
+  <img src="screenshots\2.jpg" width="300"/>
+  <img src="screenshots\3.jpg" width="300"/>
+  <img src="screenshots\4.jpg" width="300"/>
+  <img src="screenshots\5.jpg" width="300"/>
+  <img src="screenshots\6.jpg" width="300"/>
+  <img src="screenshots\7.jpg" width="300"/>
+  <img src="screenshots\8.jpg" width="300"/>
+  <img src="screenshots\9.jpg" width="300"/>
+  <img src="screenshots\10jpg" width="300"/>
+</p>
 
 ## ⚙️ System Requirements
 

@@ -6,19 +6,25 @@
 #include <fstream>
 #include <set>
 #include "helpers.h"
+#include <thread> // Dodane do animacji
+#include <chrono> // Dodane do animacji
 
 using namespace std;
 
-void showHeader() {
+void showHeader(bool showDefault = true) {
     helpers::setColor(helpers::ConsoleColor::COL_HIGHLIGHT);
-    helpers::drawLine('*');
-    cout << "                 REPRESENTATIVE SYSTEM ANALYZER" << endl;
-    cout << "                    by Adrian Lesniak" << endl;
-    helpers::drawLine('*');
-    helpers::setColor(helpers::ConsoleColor::COL_INFO);
-    cout << "\nThis program analyzes text to determine a person's preferred sensory system" << endl;
-    cout << "(Visual, Auditory, or Kinesthetic) based on their word choices.\n" << endl;
-    helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
+    if (showDefault) {
+        helpers::drawLine('*');
+        cout << "                 REPRESENTATIVE SYSTEM ANALYZER" << endl;
+        cout << "                    by Adrian Lesniak" << endl;
+        helpers::drawLine('*');
+        helpers::setColor(helpers::ConsoleColor::COL_INFO);
+        cout << "\nThis program analyzes text to determine a person's preferred sensory system" << endl;
+        cout << "(Visual, Auditory, or Kinesthetic) based on their word choices.\n" << endl;
+        helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
+    } else {
+        // Nic nie rysuj, nagłówek zostanie zastąpiony animacją
+    }
 }
 
 void viewResults() {
@@ -58,18 +64,39 @@ void analyzeText() {
         const vector<string> visual_words = {
             "look", "see", "watch", "picture", "eyes", "view", "show", "appear",
             "sight", "vision", "color", "bright", "dark", "clear", "focus", "image",
-            "scene", "perspective", "visible", "observe"
+            "scene", "perspective", "visible", "observe", "vivid", "glance", "sparkle", "spectrum", "glare", "glimpse",
+            "horizon", "shadow", "reflect", "luminous", "vibrant", "silhouette",
+            "panorama", "kaleidoscope", "static", "pixel", "contrast", "hue",
+            "shade", "streak", "shimmer", "beam", "spotlight",
+            "flicker", "mosaic", "outline", "gradient", "vignette", "dazzle", "twinkle",
+            "blurred", "contour", "lens", "prism", "tint", "translucent", "radiant", 
+            "glossy", "glint", "gaze", "flash", "glow", "shine", "dull", "brilliance"
         };
         const vector<string> auditory_words = {
             "music", "hear", "deaf", "voice", "speech", "sound", "listen", "tell",
             "talk", "silence", "loud", "quiet", "rhythm", "melody", "whisper", "sing",
-            "noise", "echo", "harmony", "say"
+            "noise", "echo", "harmony", "say", "tone", "pitch", "volume", "murmur", "clang", "buzz", "chant",
+            "chatter", "roar", "babble", "tune", "drum", "beat", "acoustic",
+            "cacophony", "resonance", "trill", "static", "intonation", "reverb",
+            "sibilant", "clangor", "drone", "flutter", "hush", "shriek", "swell", "hiss",
+            "jangle", "pluck", "ring", "squeal", "thump", "chirp", "crackle", "rustle",
+            "hum", "plink", "whistle", "clap", "snap", "pop", "groan", "sigh", "gurgle",
+            "whine", "squawk", "bark", "howl", "caw", "chirrup", "yell", "scream"
         };
         const vector<string> kinesthetic_words = {
             "feel", "feeling", "emotions", "peace", "work", "touch", "hold", "move",
             "grasp", "heavy", "light", "warm", "cold", "smooth", "rough", "comfort",
-            "handle", "pressure", "soft", "hard"
+            "handle", "pressure", "soft", "hard", "squeeze", "sway", "tremble", "pulse", "vibration", "tension",
+            "weight", "balance", "lean", "stumble", "jog", "sprint", "caress",
+            "pat", "stroke", "compress", "knead", "bounce", "tilt", "shift",
+            "ripple", "jolt", "jiggle", "fidget", "sway", "wobble", "twitch",
+            "clutch", "grip", "clench", "caress", "embrace", "hug", "tap", "flick"
         };
+
+        // For fast lookup
+        set<string> visual_set(visual_words.begin(), visual_words.end());
+        set<string> auditory_set(auditory_words.begin(), auditory_words.end());
+        set<string> kinesthetic_set(kinesthetic_words.begin(), kinesthetic_words.end());
 
         cout << "\nEnter text (type 'end' to finish):\n";
         helpers::setColor(helpers::ConsoleColor::COL_INFO);
@@ -86,66 +113,346 @@ void analyzeText() {
             return word_count[a] > word_count[b];
         });
 
+        // ANIMACJA na górze rezultatów
+        for (int i = 0; i < 3; ++i) {
+            helpers::clearScreen();
+            showHeader(false);
+            helpers::setColor(helpers::ConsoleColor::COL_HIGHLIGHT);
+            cout << "\n\n";
+            cout << string(10 + i * 10, ' ') << "*     *     *\n";
+            cout << string(10 + i * 10, ' ') << "  *     *\n";
+            cout << string(10 + i * 10, ' ') << "*     *     *\n";
+            helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        }
         helpers::clearScreen();
-        showHeader();
-        
+        showHeader(false);
+
+        // Nagłówek "RESULTS"
         helpers::setColor(helpers::ConsoleColor::COL_HIGHLIGHT);
-        cout << "Analysis Results:\n";
+        helpers::drawLine('=');
+        cout << "                   R E S U L T S\n";
+        helpers::drawLine('=');
+        helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
+
+        // Wyświetl grafikę ASCII odpowiadającą rezultatowi (oko, ucho, ręka)
+        string system_ascii;
+        if (sys_wzr > sys_aud && sys_wzr > sys_kin) {
+            // VISUAL
+            system_ascii =
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣄⠀⠀⢿⡇⠀⠀⣾⢀⣸⣄⠀⢠⡐⡄⣹⠀⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⢧⢘⣼⣤⠴⠾⣿⡛⠋⣿⡏⢹⡏⠉⣽⢻⢛⡟⢲⡿⣤⣠⣆⡔⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⢻⣤⡼⠿⣟⣿⣷⣤⣸⣿⣦⣿⣷⣿⣷⣾⣿⣿⣿⣷⣟⣁⣴⡿⠟⠲⣤⣴⠃⠀⢀⠄⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠰⣼⣶⣎⣉⣙⣿⣿⠿⢻⣿⠟⠋⠉⠙⢟⣛⠀⠀⠀⠙⠟⢿⡙⠛⠿⣶⣶⡾⠋⢉⣳⣴⡟⡠⠀⢀⢀⠀⠀\n"
+                "⠀⠀⠀⠠⣄⣠⣋⣉⣹⣿⠟⠋⠀⠀⡾⠁⠀⠀⢀⣾⣿⣿⣿⠷⠀⢤⡀⠈⣷⠀⠀⠀⠉⠻⢿⣿⣿⡿⠛⢧⣠⣾⠞⠀⠀\n"
+                "⠀⠀⠦⣀⣞⣭⣽⡿⠟⠁⠀⠀⠀⠀⡇⠀⠀⠀⢸⣿⣿⣿⣿⣄⣀⣠⠇⠀⢸⠀⠀⠀⠀⠀⠀⠈⠛⣾⣿⣿⣯⠴⠂⣀⡴\n"
+                "⠀⠐⠦⠴⣶⡿⡟⠀⠀⠀⠀⠀⠀⠀⣷⠀⠀⠀⠘⢿⣿⣿⣿⡿⠃⠀⠀⠀⡿⠀⠀⠀⠀⠀⠀⢀⣾⣿⣭⣍⡉⠉⠉⠁⠀\n"
+                "⢠⠎⢩⠟⠋⢃⢳⠀⠀⠀⠀⠀⠀⠀⠘⣷⡀⠀⠀⠀⠀⠉⠀⠀⠀⠀⢀⡾⠁⠀⠀⠀⠀⣀⣴⣿⣟⣋⠉⠉⡓⠦⠀⠀⠀\n"
+                "⠘⣄⠘⠒⠒⠘⠢⠧⢤⣀⡀⠀⠀⠀⠀⠈⠻⢦⣀⠀⠀⠀⠀⢀⣀⡴⠛⠁⠀⠀⣀⣤⣾⣿⣏⡉⠉⢉⡿⠿⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠉⠁⠀⠀⠀⠦⢤⡾⣿⡿⣷⣶⣦⣤⣄⣀⣈⣉⣉⣉⣉⣉⣁⣠⣤⣴⣾⡿⣿⣿⢧⡀⠈⣹⠶⠋⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⠤⣋⠁⡼⠛⠛⡿⣿⠖⢛⣿⠛⠛⣿⡟⠛⠻⣿⡱⠄⠉⣣⠼⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠤⢤⣹⣁⠀⢸⡇⠀⠀⠸⡃⣀⣀⠬⠷⠒⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀\n";
+        } else if (sys_aud > sys_wzr && sys_aud > sys_kin) {
+            // AUDITORY
+            system_ascii =
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡄⠀⠀⠀⠀⠀⣠⢤⡀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠈⠓⢤⣀⠀⠀⠀⠀⣾⠿⡄⠀⠀⠀⠀⠀⠀⠀⢀⣶⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣷⣀⣀⣀⡠⠤⠿⢧⡧⠓⠀⠀⣀⣤⠤⠤⢄⣀⣰⠷⡆⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠈⠉⠒⠦⢤⣏⣰⡇⠀⠀⠀⠀⠀⠀⢀⡾⠿⣯⣽⣻⡏⠀⠀⠀⠀⣠⣀⣀⡤⠤⠴⠒⠒⠀⡏⣻⣇⡤⠤⠖⠒⢲⣚⡩⠭⠭⠽⣛⣟⣛⣛⣻⣿⣿⣿⣷⣦⣄⠀⠀⠀⠀\n"
+                "⠀⠉⠒⠤⣀⠀⠀⣠⣿⠟⠉⠙⠒⠒⢒⣶⡄⡞⠀⠐⠒⢒⡟⠒⠚⠉⠉⠁⡿⣦⣀⣠⠤⠤⠒⢾⡿⣁⣯⠤⠔⣒⣫⣭⠤⠐⣒⡫⠭⣤⡞⠒⠚⠉⠉⠉⠙⠚⠛⠿⢿⣿⣦⣷⡀\n"
+                "⠀⣀⠀⠀⠀⣽⡿⠿⡧⠤⢀⣀⣀⣀⣿⣿⣿⣁⣠⣶⣶⣼⠡⠤⠤⠖⢒⢺⠉⡹⢁⣀⡠⠤⣶⡆⢉⣁⠤⠖⢂⣏⠭⢿⠂⠉⠁⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢹⡇⠇\n"
+                "⠀⠀⠉⠒⣼⣏⣠⣴⣷⣦⡄⠀⠀⠀⠀⠀⡀⠀⠈⠛⠛⠁⠀⠀⣀⣠⠿⠟⠒⠋⠉⢀⣠⢼⠟⠛⢉⡠⠔⠚⣩⡇⢰⡾⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀\n"
+                "⠀⠠⢄⡀⢸⡇⢿⠉⣿⠛⣿⠲⠤⠤⠤⢴⣧⠴⠒⠒⠒⠈⠉⠉⡄⠀⣀⡀⠤⠒⠊⠉⣀⣸⠖⠊⠉⠀⠀⠀⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠉⠓⠻⢤⣕⣿⡴⠋⠀⠀⠀⠀⣾⡟⣧⢀⣀⣠⠤⢄⡞⠛⠉⠁⠀⣠⠤⠒⠋⣥⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠐⠦⢀⡀⣠⣤⡀⢹⠈⠉⠉⠉⠉⠉⡏⢻⣿⠁⠀⠀⢀⣜⣹⡧⠖⠊⠉⠀⠀⠀⠀⠙⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠉⢿⣛⣣⡾⢤⣀⣀⣀⣤⣴⣅⣴⠧⠄⠒⠚⠛⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠉⠉⠀⠀⠀⠀⠘⠛⠋⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n";
+        } else if (sys_kin > sys_wzr && sys_kin > sys_aud) {
+            // KINESTHETIC
+            system_ascii =
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡖⠉⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⡤⣄⠀⠀⠀⠀⠀⢰⠀⠀⢸⠀⠀⠀⡸⠉⢣⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⢸⡀⠈⢧⠀⠀⠀⠀⢸⣀⣀⢸⠀⠀⠀⠇⠀⢸⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠸⡇⠀⢈⡆⠀⠀⠀⢸⠀⠀⠸⠀⠀⢸⠠⠄⡘⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⢻⠉⠀⠱⠀⠀⠀⡆⢀⡀⣄⠀⠀⡆⠀⠀⠇⠀⠀⠀⡔⢢\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠸⡆⠀⣀⢇⠀⠀⡇⠉⠙⢹⠀⠘⠰⠦⢼⠀⠀⠀⡰⠀⢰\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⢳⡉⠁⠈⠆⠀⡇⠀⠀⢸⠀⡇⠀⠀⠸⠀⠀⡰⠁⢂⠄\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢧⠀⠀⠘⣄⡇⢴⡤⢸⣤⢁⡀⠀⠇⢀⡎⠠⣀⠎⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⡖⠊⠁⠈⠒⠀⠀⠀⠀⠉⠒⠸⣄⡜⠀⢀⠟⠀⠀\n"
+                "⡠⠖⠒⠢⢤⡀⠀⠀⠀⠀⢠⠁⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢗⡞⠀⠀⠀\n"
+                "⠉⠒⢄⠀⠀⠘⢆⠀⠀⠀⠘⣄⠤⠀⠤⢀⠈⠁⠐⠤⢀⡀⠀⠀⠀⠀⡇⠀⠀⠀\n"
+                "⠀⠀⠀⠛⢄⠀⠈⠓⣄⠀⢸⢠⠀⠀⠑⢄⠈⠢⣀⠀⠀⠈⠁⠢⡀⢠⠃⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠈⢳⠀⠀⠈⠓⠚⠁⠀⠀⠀⠈⡆⠀⠀⠑⠂⠀⠀⠀⠀⢸⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⢧⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⡎⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠙⢆⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⢠⠇⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠈⢆⠀⠀⠀⠀⠀⠀⢠⠀⠀⠀⠀⠀⠀⠀⡸⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢣⡀⠀⠀⠀⢀⡜⠀⠀⠀⠀⠀⠀⢠⠁⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣒⢄⣀⣀⣀⠀⠤⠀⣀⡀⠀⡸⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠀⠉⠉⢠⡶⠀⢠⡶⠀⠀⢠⠁⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠁⠀⠀⠂⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀\n";
+        } else if (sys_wzr == sys_aud && sys_wzr > 0) {
+            // VISUAL + AUDITORY
+            system_ascii =
+                // Visual
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣄⠀⠀⢿⡇⠀⠀⣾⢀⣸⣄⠀⢠⡐⡄⣹⠀⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⢧⢘⣼⣤⠴⠾⣿⡛⠋⣿⡏⢹⡏⠉⣽⢻⢛⡟⢲⡿⣤⣠⣆⡔⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⢻⣤⡼⠿⣟⣿⣷⣤⣸⣿⣦⣿⣷⣿⣷⣾⣿⣿⣿⣷⣟⣁⣴⡿⠟⠲⣤⣴⠃⠀⢀⠄⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠰⣼⣶⣎⣉⣙⣿⣿⠿⢻⣿⠟⠋⠉⠙⢟⣛⠀⠀⠀⠙⠟⢿⡙⠛⠿⣶⣶⡾⠋⢉⣳⣴⡟⡠⠀⢀⢀⠀⠀\n"
+                "⠀⠀⠀⠠⣄⣠⣋⣉⣹⣿⠟⠋⠀⠀⡾⠁⠀⠀⢀⣾⣿⣿⣿⠷⠀⢤⡀⠈⣷⠀⠀⠀⠉⠻⢿⣿⣿⡿⠛⢧⣠⣾⠞⠀⠀\n"
+                "⠀⠀⠦⣀⣞⣭⣽⡿⠟⠁⠀⠀⠀⠀⡇⠀⠀⠀⢸⣿⣿⣿⣿⣄⣀⣠⠇⠀⢸⠀⠀⠀⠀⠀⠀⠈⠛⣾⣿⣿⣯⠴⠂⣀⡴\n"
+                "⠀⠐⠦⠴⣶⡿⡟⠀⠀⠀⠀⠀⠀⠀⣷⠀⠀⠀⠘⢿⣿⣿⣿⡿⠃⠀⠀⠀⡿⠀⠀⠀⠀⠀⠀⢀⣾⣿⣭⣍⡉⠉⠉⠁⠀\n"
+                "⢠⠎⢩⠟⠋⢃⢳⠀⠀⠀⠀⠀⠀⠀⠘⣷⡀⠀⠀⠀⠀⠉⠀⠀⠀⠀⢀⡾⠁⠀⠀⠀⠀⣀⣴⣿⣟⣋⠉⠉⡓⠦⠀⠀⠀\n"
+                "⠘⣄⠘⠒⠒⠘⠢⠧⢤⣀⡀⠀⠀⠀⠀⠈⠻⢦⣀⠀⠀⠀⠀⢀⣀⡴⠛⠁⠀⠀⣀⣤⣾⣿⣏⡉⠉⢉⡿⠿⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠉⠁⠀⠀⠀⠦⢤⡾⣿⡿⣷⣶⣦⣤⣄⣀⣈⣉⣉⣉⣉⣉⣁⣠⣤⣴⣾⡿⣿⣿⢧⡀⠈⣹⠶⠋⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⠤⣋⠁⡼⠛⠛⡿⣿⠖⢛⣿⠛⠛⣿⡟⠛⠻⣿⡱⠄⠉⣣⠼⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠤⢤⣹⣁⠀⢸⡇⠀⠀⠸⡃⣀⣀⠬⠷⠒⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀\n"
+                // Auditory (side by side)
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡄⠀⠀⠀⠀⠀⣠⢤⡀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "    ⠈⠓⢤⣀⠀⠀⠀⠀⣾⠿⡄⠀⠀⠀⠀⠀⠀⠀⢀⣶⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣷⣀⣀⣀⡠⠤⠿⢧⡧⠓⠀⠀⣀⣤⠤⠤⢄⣀⣰⠷⡆⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠈⠉⠒⠦⢤⣏⣰⡇⠀⠀⠀⠀⠀⠀⢀⡾⠿⣯⣽⣻⡏⠀⠀⠀⠀⣠⣀⣀⡤⠤⠴⠒⠒⠀⡏⣻⣇⡤⠤⠖⠒⢲⣚⡩⠭⠭⠽⣛⣟⣛⣛⣻⣿⣿⣿⣷⣦⣄⠀⠀⠀⠀\n"
+                "    ⠀⠉⠒⠤⣀⠀⠀⣠⣿⠟⠉⠙⠒⠒⢒⣶⡄⡞⠀⠐⠒⢒⡟⠒⠚⠉⠉⠁⡿⣦⣀⣠⠤⠤⠒⢾⡿⣁⣯⠤⠔⣒⣫⣭⠤⠐⣒⡫⠭⣤⡞⠒⠚⠉⠉⠉⠙⠚⠛⠿⢿⣿⣦⣷⡀\n"
+                "    ⠀⣀⠀⠀⠀⣽⡿⠿⡧⠤⢀⣀⣀⣀⣿⣿⣿⣁⣠⣶⣶⣼⠡⠤⠤⠖⢒⢺⠉⡹⢁⣀⡠⠤⣶⡆⢉⣁⠤⠖⢂⣏⠭⢿⠂⠉⠁⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢹⡇⠇\n"
+                "    ⠀⠀⠉⠒⣼⣏⣠⣴⣷⣦⡄⠀⠀⠀⠀⠀⡀⠀⠈⠛⠛⠁⠀⠀⣀⣠⠿⠟⠒⠋⠉⢀⣠⢼⠟⠛⢉⡠⠔⠚⣩⡇⢰⡾⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀\n"
+                "    ⠀⠠⢄⡀⢸⡇⢿⠉⣿⠛⣿⠲⠤⠤⠤⢴⣧⠴⠒⠒⠒⠈⠉⠉⡄⠀⣀⡀⠤⠒⠊⠉⣀⣸⠖⠊⠉⠀⠀⠀⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠉⠓⠻⢤⣕⣿⡴⠋⠀⠀⠀⠀⣾⡟⣧⢀⣀⣠⠤⢄⡞⠛⠉⠁⠀⣠⠤⠒⠋⣥⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠐⠦⢀⡀⣠⣤⡀⢹⠈⠉⠉⠉⠉⠉⡏⢻⣿⠁⠀⠀⢀⣜⣹⡧⠖⠊⠉⠀⠀⠀⠀⠙⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠉⢿⣛⣣⡾⢤⣀⣀⣀⣤⣴⣅⣴⠧⠄⠒⠚⠛⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠉⠉⠀⠀⠀⠀⠘⠛⠋⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n";
+        } else if (sys_kin == sys_aud && sys_kin > 0) {
+            // AUDITORY + KINESTHETIC
+            system_ascii =
+                // Auditory
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡄⠀⠀⠀⠀⠀⣠⢤⡀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠈⠓⢤⣀⠀⠀⠀⠀⣾⠿⡄⠀⠀⠀⠀⠀⠀⠀⢀⣶⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣷⣀⣀⣀⡠⠤⠿⢧⡧⠓⠀⠀⣀⣤⠤⠤⢄⣀⣰⠷⡆⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠈⠉⠒⠦⢤⣏⣰⡇⠀⠀⠀⠀⠀⠀⢀⡾⠿⣯⣽⣻⡏⠀⠀⠀⠀⣠⣀⣀⡤⠤⠴⠒⠒⠀⡏⣻⣇⡤⠤⠖⠒⢲⣚⡩⠭⠭⠽⣛⣟⣛⣛⣻⣿⣿⣿⣷⣦⣄⠀⠀⠀⠀\n"
+                "⠀⠉⠒⠤⣀⠀⠀⣠⣿⠟⠉⠙⠒⠒⢒⣶⡄⡞⠀⠐⠒⢒⡟⠒⠚⠉⠉⠁⡿⣦⣀⣠⠤⠤⠒⢾⡿⣁⣯⠤⠔⣒⣫⣭⠤⠐⣒⡫⠭⣤⡞⠒⠚⠉⠉⠉⠙⠚⠛⠿⢿⣿⣦⣷⡀\n"
+                "⠀⣀⠀⠀⠀⣽⡿⠿⡧⠤⢀⣀⣀⣀⣿⣿⣿⣁⣠⣶⣶⣼⠡⠤⠤⠖⢒⢺⠉⡹⢁⣀⡠⠤⣶⡆⢉⣁⠤⠖⢂⣏⠭⢿⠂⠉⠁⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢹⡇⠇\n"
+                "⠀⠀⠉⠒⣼⣏⣠⣴⣷⣦⡄⠀⠀⠀⠀⠀⡀⠀⠈⠛⠛⠁⠀⠀⣀⣠⠿⠟⠒⠋⠉⢀⣠⢼⠟⠛⢉⡠⠔⠚⣩⡇⢰⡾⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀\n"
+                "⠀⠠⢄⡀⢸⡇⢿⠉⣿⠛⣿⠲⠤⠤⠤⢴⣧⠴⠒⠒⠒⠈⠉⠉⡄⠀⣀⡀⠤⠒⠊⠉⣀⣸⠖⠊⠉⠀⠀⠀⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠉⠓⠻⢤⣕⣿⡴⠋⠀⠀⠀⠀⣾⡟⣧⢀⣀⣠⠤⢄⡞⠛⠉⠁⠀⣠⠤⠒⠋⣥⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠐⠦⢀⡀⣠⣤⡀⢹⠈⠉⠉⠉⠉⠉⡏⢻⣿⠁⠀⠀⢀⣜⣹⡧⠖⠊⠉⠀⠀⠀⠀⠙⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠉⢿⣛⣣⡾⢤⣀⣀⣀⣤⣴⣅⣴⠧⠄⠒⠚⠛⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠉⠉⠀⠀⠀⠀⠘⠛⠋⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                // Kinesthetic (side by side)
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⡖⠉⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⡤⣄⠀⠀⠀⠀⠀⢰⠀⠀⢸⠀⠀⠀⡸⠉⢣⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⢸⡀⠈⢧⠀⠀⠀⠀⢸⣀⣀⢸⠀⠀⠀⠇⠀⢸⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠸⡇⠀⢈⡆⠀⠀⠀⢸⠀⠀⠸⠀⠀⢸⠠⠄⡘⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⢻⠉⠀⠱⠀⠀⠀⡆⢀⡀⣄⠀⠀⡆⠀⠀⠇⠀⠀⠀⡔⢢\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠸⡆⠀⣀⢇⠀⠀⡇⠉⠙⢹⠀⠘⠰⠦⢼⠀⠀⠀⡰⠀⢰\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢳⡉⠁⠈⠆⠀⡇⠀⠀⢸⠀⡇⠀⠀⠸⠀⠀⡰⠁⢂⠄\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢧⠀⠀⠘⣄⡇⢴⡤⢸⣤⢁⡀⠀⠇⢀⡎⠠⣀⠎⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⡖⠊⠁⠈⠒⠀⠀⠀⠀⠉⠒⠸⣄⡜⠀⢀⠟⠀⠀\n"
+                "    ⡠⠖⠒⠢⢤⡀⠀⠀⠀⠀⢠⠁⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢗⡞⠀⠀⠀\n"
+                "    ⠉⠒⢄⠀⠀⠘⢆⠀⠀⠀⠘⣄⠤⠀⠤⢀⠈⠁⠐⠤⢀⡀⠀⠀⠀⠀⡇⠀⠀⠀\n"
+                "    ⠀⠀⠀⠛⢄⠀⠈⠓⣄⠀⢸⢠⠀⠀⠑⢄⠈⠢⣀⠀⠀⠈⠁⠢⡀⢠⠃⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠈⢳⠀⠀⠈⠓⠚⠁⠀⠀⠀⠈⡆⠀⠀⠑⠂⠀⠀⠀⠀⢸⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⢧⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⡎⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠙⢆⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⢠⠇⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠈⢆⠀⠀⠀⠀⠀⠀⢠⠀⠀⠀⠀⠀⠀⠀⡸⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢣⡀⠀⠀⠀⢀⡜⠀⠀⠀⠀⠀⠀⢠⠁⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣒⢄⣀⣀⣀⠀⠤⠀⣀⡀⠀⡸⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠀⠉⠉⢠⡶⠀⢠⡶⠀⠀⢠⠁⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠁⠀⠀⠂⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀\n";
+        } else if (sys_wzr == sys_kin && sys_wzr > 0) {
+            // VISUAL + KINESTHETIC
+            system_ascii =
+                // Visual
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣄⠀⠀⢿⡇⠀⠀⣾⢀⣸⣄⠀⢠⡐⡄⣹⠀⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⢧⢘⣼⣤⠴⠾⣿⡛⠋⣿⡏⢹⡏⠉⣽⢻⢛⡟⢲⡿⣤⣠⣆⡔⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⢻⣤⡼⠿⣟⣿⣷⣤⣸⣿⣦⣿⣷⣿⣷⣾⣿⣿⣿⣷⣟⣁⣴⡿⠟⠲⣤⣴⠃⠀⢀⠄⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠰⣼⣶⣎⣉⣙⣿⣿⠿⢻⣿⠟⠋⠉⠙⢟⣛⠀⠀⠀⠙⠟⢿⡙⠛⠿⣶⣶⡾⠋⢉⣳⣴⡟⡠⠀⢀⢀⠀⠀\n"
+                "⠀⠀⠀⠠⣄⣠⣋⣉⣹⣿⠟⠋⠀⠀⡾⠁⠀⠀⢀⣾⣿⣿⣿⠷⠀⢤⡀⠈⣷⠀⠀⠀⠉⠻⢿⣿⣿⡿⠛⢧⣠⣾⠞⠀⠀\n"
+                "⠀⠀⠦⣀⣞⣭⣽⡿⠟⠁⠀⠀⠀⠀⡇⠀⠀⠀⢸⣿⣿⣿⣿⣄⣀⣠⠇⠀⢸⠀⠀⠀⠀⠀⠀⠈⠛⣾⣿⣿⣯⠴⠂⣀⡴\n"
+                "⠀⠐⠦⠴⣶⡿⡟⠀⠀⠀⠀⠀⠀⠀⣷⠀⠀⠀⠘⢿⣿⣿⣿⡿⠃⠀⠀⠀⡿⠀⠀⠀⠀⠀⠀⢀⣾⣿⣭⣍⡉⠉⠉⠁⠀\n"
+                "⢠⠎⢩⠟⠋⢃⢳⠀⠀⠀⠀⠀⠀⠀⠘⣷⡀⠀⠀⠀⠀⠉⠀⠀⠀⠀⢀⡾⠁⠀⠀⠀⠀⣀⣴⣿⣟⣋⠉⠉⡓⠦⠀⠀⠀\n"
+                "⠘⣄⠘⠒⠒⠘⠢⠧⢤⣀⡀⠀⠀⠀⠀⠈⠻⢦⣀⠀⠀⠀⠀⢀⣀⡴⠛⠁⠀⠀⣀⣤⣾⣿⣏⡉⠉⢉⡿⠿⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠉⠁⠀⠀⠀⠦⢤⡾⣿⡿⣷⣶⣦⣤⣄⣀⣈⣉⣉⣉⣉⣉⣁⣠⣤⣴⣾⡿⣿⣿⢧⡀⠈⣹⠶⠋⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⠤⣋⠁⡼⠛⠛⡿⣿⠖⢛⣿⠛⠛⣿⡟⠛⠻⣿⡱⠄⠉⣣⠼⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠤⢤⣹⣁⠀⢸⡇⠀⠀⠸⡃⣀⣀⠬⠷⠒⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀"
+                // Kinesthetic (side by side)
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⡖⠉⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⡤⣄⠀⠀⠀⠀⠀⢰⠀⠀⢸⠀⠀⠀⡸⠉⢣⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⢸⡀⠈⢧⠀⠀⠀⠀⢸⣀⣀⢸⠀⠀⠀⠇⠀⢸⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠸⡇⠀⢈⡆⠀⠀⠀⢸⠀⠀⠸⠀⠀⢸⠠⠄⡘⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⢻⠉⠀⠱⠀⠀⠀⡆⢀⡀⣄⠀⠀⡆⠀⠀⠇⠀⠀⠀⡔⢢\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠸⡆⠀⣀⢇⠀⠀⡇⠉⠙⢹⠀⠘⠰⠦⢼⠀⠀⠀⡰⠀⢰\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢳⡉⠁⠈⠆⠀⡇⠀⠀⢸⠀⡇⠀⠀⠸⠀⠀⡰⠁⢂⠄\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢧⠀⠀⠘⣄⡇⢴⡤⢸⣤⢁⡀⠀⠇⢀⡎⠠⣀⠎⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⡖⠊⠁⠈⠒⠀⠀⠀⠀⠉⠒⠸⣄⡜⠀⢀⠟⠀⠀\n"
+                "    ⡠⠖⠒⠢⢤⡀⠀⠀⠀⠀⢠⠁⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢗⡞⠀⠀⠀\n"
+                "    ⠉⠒⢄⠀⠀⠘⢆⠀⠀⠀⠘⣄⠤⠀⠤⢀⠈⠁⠐⠤⢀⡀⠀⠀⠀⠀⡇⠀⠀⠀\n"
+                "    ⠀⠀⠀⠛⢄⠀⠈⠓⣄⠀⢸⢠⠀⠀⠑⢄⠈⠢⣀⠀⠀⠈⠁⠢⡀⢠⠃⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠈⢳⠀⠀⠈⠓⠚⠁⠀⠀⠀⠈⡆⠀⠀⠑⠂⠀⠀⠀⠀⢸⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⢧⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⡎⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠙⢆⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⢠⠇⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠈⢆⠀⠀⠀⠀⠀⠀⢠⠀⠀⠀⠀⠀⠀⠀⡸⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢣⡀⠀⠀⠀⢀⡜⠀⠀⠀⠀⠀⠀⢠⠁⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣒⢄⣀⣀⣀⠀⠤⠀⣀⡀⠀⡸⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠀⠉⠉⢠⡶⠀⢠⡶⠀⠀⢠⠁⠀⠀⠀⠀⠀⠀\n"
+                "    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠁⠀⠀⠂⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀\n";
+        } else {
+            // Brak rozpoznania
+        //    system_ascii = "RESULTS:\n";
+        }
+
+        helpers::setColor(helpers::ConsoleColor::COL_HIGHLIGHT);
+        cout << system_ascii << endl;
         helpers::drawLine('-');
         helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
 
-        // First, analyze all words for sensory systems
-        for (const auto& word : words) {
-            // Check if the word belongs to one of the categories
-            if (find(visual_words.begin(), visual_words.end(), word) != visual_words.end())
-            {
+        // Analyze only characteristic words for sensory systems
+        map<string, int> rep_word_count;
+        for (const auto& w : words) {
+            if (visual_set.count(w)) {
                 ++sys_wzr;
-            }
-            else if (find(auditory_words.begin(), auditory_words.end(), word) != auditory_words.end())
-            {
+                ++rep_word_count[w];
+            } else if (auditory_set.count(w)) {
                 ++sys_aud;
-            }
-            else if (find(kinesthetic_words.begin(), kinesthetic_words.end(), word) != kinesthetic_words.end())
-            {
+                ++rep_word_count[w];
+            } else if (kinesthetic_set.count(w)) {
                 ++sys_kin;
+                ++rep_word_count[w];
             }
         }
 
-        // Then display frequent words (separate from analysis)
-        cout << "Most frequently used words:\n" << endl;
-        set<string> displayed_words;
-        for (const auto& word : words) {
-            if (word_count[word] > 1 && displayed_words.find(word) == displayed_words.end()) {
-                cout << word << ": " << word_count[word] << '\n';
-                displayed_words.insert(word);
-            }
-        }
+        // Display frequent representative words only
+        helpers::setColor(helpers::ConsoleColor::COL_HIGHLIGHT);
+        cout << "\nMost frequently used representative words:\n\n";
+        helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
 
-        // Results analysis
-        if (sys_wzr == 0 && sys_aud == 0 && sys_kin == 0) {
-            cout << "\nUnable to determine the representative system. No characteristic words found." << endl;
-        } else if (sys_wzr > sys_aud && sys_wzr > sys_kin) {
-            cout << "\nThe person uses mainly the visual system." << endl;
-        } else if (sys_aud > sys_wzr && sys_aud > sys_kin) {
-            cout << "\nThe person uses mainly the auditive system." << endl;
-        } else if (sys_kin > sys_wzr && sys_kin > sys_aud) {
-            cout << "\nThe person uses mainly the kinesthetic system." << endl;
-        } else if (sys_wzr == sys_aud && sys_wzr > 0) {
-            cout << "\nThe person uses mainly the visual and auditive system." << endl;
-        } else if (sys_wzr == sys_kin && sys_wzr > 0) {
-            cout << "\nThe person uses mainly the visual and kinesthetic system." << endl;
-        } else if (sys_kin == sys_aud && sys_kin > 0) {
-            cout << "\nThe person uses mainly the auditive and kinesthetic system." << endl;
+        vector<pair<string, int>> rep_words_sorted(rep_word_count.begin(), rep_word_count.end());
+        sort(rep_words_sorted.begin(), rep_words_sorted.end(), [](const auto& a, const auto& b) {
+            return a.second > b.second;
+        });
+
+        if (rep_words_sorted.empty()) {
+            cout << "(No representative words found in your text)\n";
         } else {
-            cout << "\nUnable to determine the representative system." << endl;
+            for (const auto& p : rep_words_sorted) {
+                // Color by system
+                if (visual_set.count(p.first)) {
+                    helpers::setColor(helpers::ConsoleColor::COL_HIGHLIGHT);
+                } else if (auditory_set.count(p.first)) {
+                    helpers::setColor(helpers::ConsoleColor::COL_INFO);
+                } else if (kinesthetic_set.count(p.first)) {
+                    helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
+                }
+                cout << "  " << p.first << ": " << p.second << '\n';
+            }
+            helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
         }
-        
-        // Save results to file
+
+        // Results analysis with ASCII art and colors
+        helpers::drawLine('-');
+        cout << endl;
+        string result_msg;
+        helpers::ConsoleColor result_color = helpers::ConsoleColor::COL_DEFAULT;
+        string ascii_art;
+
+        if (sys_wzr == 0 && sys_aud == 0 && sys_kin == 0) {
+            result_msg = "Unable to determine the representative system.\nNo characteristic words found.";
+            result_color = helpers::ConsoleColor::COL_ERROR;
+            ascii_art =
+                "   .--.      .-'.      .--.      .--.      .--.      .--.\n"
+                "  :::::.\\::::::::.\\::::::::.\\::::::::.\\::::::::.\\::::::::.\\\n"
+                "  '      '      '      '      '      '      '      '      '\n";
+        } else if (sys_wzr > sys_aud && sys_wzr > sys_kin) {
+            result_msg = "The person uses mainly the VISUAL system.";
+            result_color = helpers::ConsoleColor::COL_HIGHLIGHT;
+            ascii_art =
+                "   /\\   \n"
+                "  /  \\  \n"
+                " /----\\ \n"
+                " | () |\n"
+                "  \\__/  (eye)\n";
+        } else if (sys_aud > sys_wzr && sys_aud > sys_kin) {
+            result_msg = "The person uses mainly the AUDITORY system.";
+            result_color = helpers::ConsoleColor::COL_INFO;
+            ascii_art =
+                "   (  )   \n"
+                "  (    )  \n"
+                " (      ) (ear)\n"
+                "  \\    /  \n"
+                "   \\__/   \n";
+        } else if (sys_kin > sys_wzr && sys_kin > sys_aud) {
+            result_msg = "The person uses mainly the KINESTHETIC system.";
+            result_color = helpers::ConsoleColor::COL_DEFAULT;
+            ascii_art =
+                "   o   \n"
+                "  /|\\  (body)\n"
+                "  / \\  \n";
+        } else if (sys_wzr == sys_aud && sys_wzr > 0) {
+            result_msg = "The person uses mainly the VISUAL and AUDITORY system.";
+            result_color = helpers::ConsoleColor::COL_HIGHLIGHT;
+            ascii_art =
+                "   /\\    (  ) \n"
+                "  /  \\  (    )\n"
+                " /----\\(      )\n"
+                " | () | \\    /\n"
+                "  \\__/   \\__/\n";
+        } else if (sys_wzr == sys_kin && sys_wzr > 0) {
+            result_msg = "The person uses mainly the VISUAL and KINESTHETIC system.";
+            result_color = helpers::ConsoleColor::COL_HIGHLIGHT;
+            ascii_art =
+                "   /\\    o \n"
+                "  /  \\  /|\\\n"
+                " /----\\ / \\\n"
+                " | () |\n"
+                "  \\__/\n";
+        } else if (sys_kin == sys_aud && sys_kin > 0) {
+            result_msg = "The person uses mainly the AUDITORY and KINESTHETIC system.";
+            result_color = helpers::ConsoleColor::COL_INFO;
+            ascii_art =
+                "   (  )   o\n"
+                "  (    ) /|\\\n"
+                " (      )/ \\\n"
+                "  \\    /\n"
+                "   \\__/\n";
+        } else {
+            result_msg = "Unable to determine the representative system.";
+            result_color = helpers::ConsoleColor::COL_ERROR;
+        }
+
+        helpers::setColor(result_color);
+        cout << "\n" << ascii_art << endl;
+        cout << result_msg << endl;
+        helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
+
+        // Zaczekaj na ENTER po pokazaniu rezultatów (przed animacją!)
+        helpers::setColor(helpers::ConsoleColor::COL_INFO);
+        cout << "\nPress ENTER to continue...";
+        helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Wyczyść bufor
+        cin.get(); // Czeka na ENTER
+
+        // Prosta animacja gwiazdek zamiast dużego napisu
+        for (int i = 0; i < 3; ++i) {
+            helpers::clearScreen();
+            showHeader();
+            helpers::setColor(helpers::ConsoleColor::COL_HIGHLIGHT);
+            cout << "\n\n";
+            cout << string(10 + i * 10, ' ') << "*     *     *\n";
+            cout << string(10 + i * 10, ' ') << "  *     *\n";
+            cout << string(10 + i * 10, ' ') << "*     *     *\n";
+            helpers::setColor(helpers::ConsoleColor::COL_DEFAULT);
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        }
+        helpers::drawLine('-');
+
+        // Save results to file (only representative words)
         ofstream outFile("analysis_results.txt", ios::app);
         outFile << "Analysis Results:\n";
-        for (const auto& word : displayed_words) {
-            outFile << word << ": " << word_count[word] << '\n';
+        for (const auto& p : rep_words_sorted) {
+            outFile << p.first << ": " << p.second << '\n';
         }
+        outFile << result_msg << "\n";
+        outFile << "--------------------*-------------------\n";
         outFile.close();
 
     } catch (const exception& e) {
